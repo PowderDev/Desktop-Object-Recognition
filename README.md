@@ -8,8 +8,8 @@
 
 ```bash
 poetry install
+poetry.exe run pip uninstall torch torchvision
 poetry.exe run pip install torch torchvision --index-url https://download.pytorch.org/whl/cu117
-poetry.exr run pip uninstall torch torchvision
 poetry shell
 python main.py
 ```
