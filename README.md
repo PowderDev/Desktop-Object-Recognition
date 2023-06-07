@@ -2,12 +2,13 @@
 
 [Ссылка на скачивание](https://developer.nvidia.com/cuda-11-7-1-download-archive?target_os=Windows&target_arch=x86_64&target_version=10&target_type=exe_local)
 
-В данном случае выбрана версия 11.7. Для работы с другими версиями нужно отредоктировать ссылку в --index-url ниже
+В данном случае выбрана версия 11.7. Для работы с другими версиями нужно отредактировать ссылку в --index-url ниже
 
 #### Запуск проекта
 
 ```bash
 poetry install
+poetry.exe run pip uninstall torch torchvision
 poetry.exe run pip install torch torchvision --index-url https://download.pytorch.org/whl/cu117
 poetry shell
 python main.py
