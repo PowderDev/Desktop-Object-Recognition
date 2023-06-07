@@ -51,12 +51,19 @@ class Window(QMainWindow):
 
     def load_image(self, file_path="", current_media=None):
         if self.current_media_type == "video":
-            self.worker.stop()
+            self.worker.release()
 
         self.current_media_type = "image"
 
+        if file_path:
+            file_name = file_path.split("/")[-1]
+            self.ui.current_file.setText(file_name)
+        else:
+            file_name = current_media["image_file_path"].split("/")[-1]
+            self.ui.current_file.setText(file_name)
+
         image = self.media_handler.analyze_image(
-            image_path=file_path, current_media=current_media
+            file_path=file_path, current_media=current_media
         )
 
         setup_report_table(
@@ -73,7 +80,14 @@ class Window(QMainWindow):
             self.load_video(file_path)
 
     def load_video(self, file_path):
+        if self.current_media_type == "video":
+            self.worker.release()
+
         self.current_media_type = "video"
+
+        if file_path != 0:
+            file_name = file_path.split("/")[-1]
+            self.ui.current_file.setText(file_name)
 
         self.media_handler.create_new_video_history_record(file_path)
 
@@ -90,6 +104,14 @@ class Window(QMainWindow):
     # изображений и видео для отображения состояния ( условия, найденные объекты и т.д. )
     # текущего изображения или видео
     def handle_UI_on_media_change(self):
+        self.ui.current_file_prefix.setVisible(True)
+        self.ui.current_file.setVisible(True)
+
+        if self.current_media_type == "video":
+            if self.media_handler.current_media["file_path"] == 0:
+                self.ui.current_file_prefix.setVisible(False)
+                self.ui.current_file.setVisible(False)
+
         self.show_control_buttons()
         setup_condition_options(
             self.ui,
@@ -106,6 +128,11 @@ class Window(QMainWindow):
         )
 
         self.show_filters()
+
+        self.ui.label_6.setVisible(True)
+        self.ui.label_7.setVisible(True)
+        self.ui.label_8.setVisible(True)
+        self.ui.label_9.setVisible(True)
 
         if self.media_handler.has_prev or self.media_handler.has_next:
             self.clear_ui()
@@ -187,6 +214,7 @@ class Window(QMainWindow):
             lambda: self.handle_history_move(self.media_handler.set_next)
         )
         self.ui.refresh_image.clicked.connect(self.refresh_image)
+        self.ui.webcamera.clicked.connect(self.on_webcam_button_click)
 
         self.ui.crop.setVisible(False)
         self.ui.stopVideoButton.setVisible(False)
@@ -196,6 +224,12 @@ class Window(QMainWindow):
         self.ui.tableWidget_2.setVisible(False)
         self.ui.tableWidget.setVisible(False)
         self.ui.tableWidget_3.setVisible(False)
+        self.ui.current_file_prefix.setVisible(False)
+        self.ui.current_file.setVisible(False)
+        self.ui.label_6.setVisible(False)
+        self.ui.label_7.setVisible(False)
+        self.ui.label_8.setVisible(False)
+        self.ui.label_9.setVisible(False)
 
         self.hide_filters()
 
@@ -253,13 +287,18 @@ class Window(QMainWindow):
         if self.current_media_type == "image":
             self.ui.stopVideoButton.setVisible(False)
             self.ui.crop.setVisible(True)
+            self.ui.refresh_image.setVisible(True)
 
         else:
             self.ui.stopVideoButton.setVisible(True)
             self.ui.stopVideoButton.setText("Stop")
             self.ui.crop.setVisible(False)
+            self.ui.refresh_image.setVisible(False)
 
         self.set_filters()
+
+    def on_webcam_button_click(self):
+        self.load_video(0)
 
     def on_crop_button_click(self):
         self.is_cropping = True
@@ -338,9 +377,6 @@ class Window(QMainWindow):
 
     def handle_history_move(self, get_current_media):
         current_media = get_current_media()
-
-        if self.current_media_type == "video":
-            self.worker.stop()
 
         if current_media["type"] == "image":
             self.load_image(current_media=current_media)

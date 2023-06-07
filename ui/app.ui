@@ -31,7 +31,7 @@
      <rect>
       <x>760</x>
       <y>20</y>
-      <width>141</width>
+      <width>171</width>
       <height>31</height>
      </rect>
     </property>
@@ -118,13 +118,6 @@
      </rect>
     </property>
     <layout class="QFormLayout" name="formLayout_2">
-     <item row="2" column="0" colspan="2">
-      <widget class="QSlider" name="solarization_slider">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
      <item row="1" column="0">
       <widget class="QLabel" name="label_3">
        <property name="maximumSize">
@@ -135,6 +128,13 @@
        </property>
        <property name="text">
         <string>Соляризация</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0" colspan="2">
+      <widget class="QSlider" name="solarization_slider">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
@@ -150,13 +150,6 @@
      </rect>
     </property>
     <layout class="QFormLayout" name="formLayout_3">
-     <item row="2" column="0" colspan="2">
-      <widget class="QSlider" name="contrast_slider">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
      <item row="1" column="0">
       <widget class="QLabel" name="label_4">
        <property name="maximumSize">
@@ -167,6 +160,13 @@
        </property>
        <property name="text">
         <string>Контрастность</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0" colspan="2">
+      <widget class="QSlider" name="contrast_slider">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
@@ -209,7 +209,7 @@
      <rect>
       <x>760</x>
       <y>50</y>
-      <width>141</width>
+      <width>171</width>
       <height>31</height>
      </rect>
     </property>
@@ -297,44 +297,144 @@
    <widget class="QTableWidget" name="tableWidget_2">
     <property name="geometry">
      <rect>
-      <x>990</x>
-      <y>210</y>
-      <width>261</width>
-      <height>192</height>
+      <x>970</x>
+      <y>320</y>
+      <width>301</width>
+      <height>141</height>
      </rect>
     </property>
    </widget>
    <widget class="QTableWidget" name="tableWidget">
     <property name="geometry">
      <rect>
-      <x>990</x>
-      <y>20</y>
-      <width>261</width>
-      <height>192</height>
+      <x>970</x>
+      <y>130</y>
+      <width>301</width>
+      <height>151</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="webcamera">
+    <property name="geometry">
+     <rect>
+      <x>760</x>
+      <y>80</y>
+      <width>171</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Загрузить из web-камеры</string>
+    </property>
+   </widget>
+   <widget class="QTableWidget" name="tableWidget_3">
+    <property name="geometry">
+     <rect>
+      <x>970</x>
+      <y>490</y>
+      <width>301</width>
+      <height>151</height>
      </rect>
     </property>
    </widget>
    <widget class="QPushButton" name="refresh_image">
     <property name="geometry">
      <rect>
-      <x>760</x>
-      <y>80</y>
-      <width>141</width>
+      <x>970</x>
+      <y>50</y>
+      <width>291</width>
       <height>31</height>
      </rect>
     </property>
     <property name="text">
-     <string>Обновить изображение</string>
+     <string>Применить условие</string>
     </property>
    </widget>
-   <widget class="QTableWidget" name="tableWidget_3">
+   <widget class="QLabel" name="label_6">
     <property name="geometry">
      <rect>
-      <x>990</x>
-      <y>450</y>
-      <width>261</width>
-      <height>192</height>
+      <x>970</x>
+      <y>110</y>
+      <width>221</width>
+      <height>16</height>
      </rect>
+    </property>
+    <property name="text">
+     <string>Выбор объекта обнаружения</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_7">
+    <property name="geometry">
+     <rect>
+      <x>970</x>
+      <y>300</y>
+      <width>221</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Выбор условия обнаружения</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_8">
+    <property name="geometry">
+     <rect>
+      <x>970</x>
+      <y>470</y>
+      <width>221</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Отчёт по обнаружению</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_9">
+    <property name="geometry">
+     <rect>
+      <x>700</x>
+      <y>150</y>
+      <width>231</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Блок фильтрации изображения</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="current_file_prefix">
+    <property name="geometry">
+     <rect>
+      <x>690</x>
+      <y>500</y>
+      <width>91</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Текущий файл:</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="current_file">
+    <property name="geometry">
+     <rect>
+      <x>780</x>
+      <y>500</y>
+      <width>191</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font-weight: bold;font-size: 9pt;</string>
+    </property>
+    <property name="text">
+     <string>car.jpg</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
   </widget>
@@ -347,6 +447,12 @@
      <height>22</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>Исходное изображение</string>
+    </property>
+   </widget>
+   <addaction name="menu"/>
   </widget>
  </widget>
  <resources/>

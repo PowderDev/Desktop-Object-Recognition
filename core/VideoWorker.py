@@ -26,7 +26,7 @@ class VideoWorker(QObject):
         if not self.cap:
             self.cap = cv2.VideoCapture(self.file_path)
 
-        while self._run_flag:
+        while self._run_flag and self.cap:
             success, cv_img = self.cap.read()
 
             if success:
@@ -37,9 +37,13 @@ class VideoWorker(QObject):
             cv2.waitKey(self.frame_delay)
 
         if self._run_flag:
-            self.cap.release()
+            if self.cap:
+                self.cap.release()
             self.cap = None
             self._run_flag = False
 
     def stop(self):
         self._run_flag = False
+
+    def release(self):
+        self.cap = None

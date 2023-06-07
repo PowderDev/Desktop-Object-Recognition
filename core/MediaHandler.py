@@ -36,7 +36,7 @@ class MediaHandler:
 
     def analyze_image(
         self,
-        image_path="",
+        file_path="",
         should_resize=True,
         should_recognize=False,
         current_media=None,
@@ -44,8 +44,8 @@ class MediaHandler:
         if current_media:
             loaded_image = current_media["loaded_image"]
         else:
-            loaded_image = self.__loadImage(image_path)
-            self.create_new_image_history_record(loaded_image)
+            loaded_image = self.__loadImage(file_path)
+            self.create_new_image_history_record(file_path, loaded_image)
 
         if current_media and not should_recognize:
             recognized_objects = current_media["recognized_objects"]
@@ -162,7 +162,7 @@ class MediaHandler:
     # Эти два метода создают создают новое медия в истории
     # загруженных медиа
 
-    def create_new_image_history_record(self, loaded_image):
+    def create_new_image_history_record(self, file_path, loaded_image):
         filters = ImageFilters()
         conditions = ConditionsHandler()
 
@@ -175,13 +175,14 @@ class MediaHandler:
                 "filters": filters,
                 "conditions": conditions,
                 "recognized_objects": {},
+                "image_file_path": file_path,
             }
         )
 
     def create_new_video_history_record(self, file_path):
         if (
             not self.current_media
-            or not self.current_media.get("file_path")
+            or self.current_media.get("file_path") is None
             or self.current_media["file_path"] != file_path
         ):
             filters = ImageFilters()
@@ -230,10 +231,10 @@ class MediaHandler:
         except IndexError:
             return None
 
-    def __loadImage(_, image_path):
+    def __loadImage(_, file_path):
         image = None
 
-        with open(image_path, "rb") as f:
+        with open(file_path, "rb") as f:
             image = Image.open(BytesIO(f.read()))
             image = np.asarray(image)
 
