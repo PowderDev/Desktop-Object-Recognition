@@ -291,7 +291,7 @@ class Window(QMainWindow):
 
         else:
             self.ui.stopVideoButton.setVisible(True)
-            self.ui.stopVideoButton.setText("Stop")
+            self.ui.stopVideoButton.setText("Остановить")
             self.ui.crop.setVisible(False)
             self.ui.refresh_image.setVisible(False)
 
