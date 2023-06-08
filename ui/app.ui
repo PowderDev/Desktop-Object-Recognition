@@ -10,6 +10,12 @@
     <height>700</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
   <property name="minimumSize">
    <size>
     <width>980</width>
@@ -21,6 +27,14 @@
     <width>1280</width>
     <height>700</height>
    </size>
+  </property>
+  <property name="font">
+   <font>
+    <family>Rockwell</family>
+    <italic>false</italic>
+    <bold>true</bold>
+    <underline>false</underline>
+   </font>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
@@ -298,7 +312,7 @@
     <property name="geometry">
      <rect>
       <x>970</x>
-      <y>320</y>
+      <y>280</y>
       <width>301</width>
       <height>141</height>
      </rect>
@@ -308,7 +322,7 @@
     <property name="geometry">
      <rect>
       <x>970</x>
-      <y>130</y>
+      <y>80</y>
       <width>301</width>
       <height>151</height>
      </rect>
@@ -331,9 +345,9 @@
     <property name="geometry">
      <rect>
       <x>970</x>
-      <y>490</y>
+      <y>450</y>
       <width>301</width>
-      <height>151</height>
+      <height>191</height>
      </rect>
     </property>
    </widget>
@@ -341,7 +355,7 @@
     <property name="geometry">
      <rect>
       <x>970</x>
-      <y>50</y>
+      <y>20</y>
       <width>291</width>
       <height>31</height>
      </rect>
@@ -354,7 +368,7 @@
     <property name="geometry">
      <rect>
       <x>970</x>
-      <y>110</y>
+      <y>60</y>
       <width>221</width>
       <height>16</height>
      </rect>
@@ -367,10 +381,19 @@
     <property name="geometry">
      <rect>
       <x>970</x>
-      <y>300</y>
-      <width>221</width>
+      <y>240</y>
+      <width>201</width>
       <height>16</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Rockwell</family>
+      <italic>false</italic>
+      <bold>true</bold>
+      <underline>false</underline>
+      <strikeout>false</strikeout>
+     </font>
     </property>
     <property name="text">
      <string>Выбор условия обнаружения</string>
@@ -380,7 +403,7 @@
     <property name="geometry">
      <rect>
       <x>970</x>
-      <y>470</y>
+      <y>430</y>
       <width>221</width>
       <height>16</height>
      </rect>
@@ -402,11 +425,58 @@
      <string>Блок фильтрации изображения</string>
     </property>
    </widget>
-   <widget class="QLabel" name="current_file_prefix">
+   <widget class="QCheckBox" name="sound">
+    <property name="geometry">
+     <rect>
+      <x>970</x>
+      <y>260</y>
+      <width>211</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Сообщить о событии со звуком</string>
+    </property>
+   </widget>
+   <widget class="QFrame" name="frame">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>690</x>
-      <y>500</y>
+      <y>140</y>
+      <width>271</width>
+      <height>321</height>
+     </rect>
+    </property>
+    <property name="mouseTracking">
+     <bool>false</bool>
+    </property>
+    <property name="tabletTracking">
+     <bool>false</bool>
+    </property>
+    <property name="acceptDrops">
+     <bool>false</bool>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="inputMethodHints">
+     <set>Qt::ImhNone</set>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+   </widget>
+   <widget class="QLabel" name="current_file_prefix">
+    <property name="geometry">
+     <rect>
+      <x>700</x>
+      <y>120</y>
       <width>91</width>
       <height>20</height>
      </rect>
@@ -421,9 +491,9 @@
    <widget class="QLabel" name="current_file">
     <property name="geometry">
      <rect>
-      <x>780</x>
-      <y>500</y>
-      <width>191</width>
+      <x>790</x>
+      <y>120</y>
+      <width>181</width>
       <height>20</height>
      </rect>
     </property>
@@ -437,22 +507,6 @@
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
-  </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>1280</width>
-     <height>22</height>
-    </rect>
-   </property>
-   <widget class="QMenu" name="menu">
-    <property name="title">
-     <string>Исходное изображение</string>
-    </property>
-   </widget>
-   <addaction name="menu"/>
   </widget>
  </widget>
  <resources/>

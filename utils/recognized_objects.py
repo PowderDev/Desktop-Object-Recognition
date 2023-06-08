@@ -11,9 +11,15 @@ def get_recognized_objects(boxes):
 
         if label in result:
             result[label]["count"] += 1
+            result[label]["score"] = ""
             result[label]["boxes"].append(box)
         else:
             color = colors[int(box[-1])]
-            result[label] = {"color": color, "count": 1, "boxes": [box]}
+            result[label] = {
+                "color": color,
+                "count": 1,
+                "boxes": [box],
+                "score": str(round(100 * float(box[-2]), 1)) + "%",
+            }
 
     return result

@@ -27,6 +27,7 @@ class MediaHandler:
         self.history = []
         self.current_index = -1
         self._crop_points = []
+        self.should_beep = False
 
     # Метод анализирет изображение с помощью модели YOLO
     # Получает данные и рисует готовое изображение
@@ -38,7 +39,7 @@ class MediaHandler:
         self,
         file_path="",
         should_resize=True,
-        should_recognize=False,
+        should_recognize=True,
         current_media=None,
     ):
         if current_media:
@@ -56,7 +57,7 @@ class MediaHandler:
 
         if current_media:
             recognized_objects = current_media["conditions"].apply_conditions(
-                recognized_objects
+                recognized_objects, should_beep=self.should_beep
             )
 
         image = self.recognition_painter.get_image_with_boxes(
@@ -81,7 +82,7 @@ class MediaHandler:
         recognized_objects = get_recognized_objects(results[0].boxes.data)
 
         recognized_objects = self.current_media["conditions"].apply_conditions(
-            recognized_objects
+            recognized_objects, should_beep=self.should_beep, beep_duration=10
         )
 
         painted_frame = self.recognition_painter.get_image_with_boxes(
@@ -153,11 +154,7 @@ class MediaHandler:
 
         resized_image = self.resize(self.current_media["loaded_image"])
         cropped_image = resized_image[left[0] : left[1], right[0] : right[1]]
-        self.current_media["loaded_image"] = cropped_image
-
-        return self.analyze_image(
-            current_media=self.current_media, should_resize=False, should_recognize=True
-        )
+        return cropped_image
 
     # Эти два метода создают создают новое медия в истории
     # загруженных медиа
@@ -214,6 +211,9 @@ class MediaHandler:
     def set_next(self):
         self.current_index += 1
         return self.current_media
+
+    def toggle_should_beep(self):
+        self.should_beep = not self.should_beep
 
     @property
     def has_prev(self):

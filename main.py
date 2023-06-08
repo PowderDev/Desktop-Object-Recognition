@@ -1,3 +1,4 @@
+import winsound
 from PyQt6.QtWidgets import (
     QApplication,
     QMainWindow,
@@ -35,7 +36,7 @@ class Window(QMainWindow):
         self.setWindowTitle("Распознование объектов")
 
         self.device = "cuda:0" if torch.cuda.is_available() else "cpu"
-        self.media_handler = MediaHandler(model, self.device)
+        self.media = MediaHandler(model, self.device)
 
         self.current_media_type = None
         self.is_cropping = False
@@ -62,13 +63,11 @@ class Window(QMainWindow):
             file_name = current_media["image_file_path"].split("/")[-1]
             self.ui.current_file.setText(file_name)
 
-        image = self.media_handler.analyze_image(
+        image = self.media.analyze_image(
             file_path=file_path, current_media=current_media
         )
 
-        setup_report_table(
-            self.ui, self.media_handler.current_media["recognized_objects"]
-        )
+        setup_report_table(self.ui, self.media.current_media["recognized_objects"])
 
         self.ui.image.setPixmap(image)
         self.handle_UI_on_media_change()
@@ -89,12 +88,12 @@ class Window(QMainWindow):
             file_name = file_path.split("/")[-1]
             self.ui.current_file.setText(file_name)
 
-        self.media_handler.create_new_video_history_record(file_path)
+        self.media.create_new_video_history_record(file_path)
 
         self.handle_UI_on_media_change()
 
         thread = QThread()
-        file_path = self.media_handler.current_media["file_path"]
+        file_path = self.media.current_media["file_path"]
         self.worker = VideoWorker(file_path)
         self.worker.moveToThread(thread)
         self.worker.on_frame.connect(self.update_video_frame)
@@ -108,7 +107,7 @@ class Window(QMainWindow):
         self.ui.current_file.setVisible(True)
 
         if self.current_media_type == "video":
-            if self.media_handler.current_media["file_path"] == 0:
+            if self.media.current_media["file_path"] == 0:
                 self.ui.current_file_prefix.setVisible(False)
                 self.ui.current_file.setVisible(False)
 
@@ -117,14 +116,14 @@ class Window(QMainWindow):
             self.ui,
             db_file_path,
             self.on_conditions_changed,
-            self.media_handler.current_media["conditions"],
+            self.media.current_media["conditions"],
         )
 
         setup_objects_to_search_database(
             self.ui,
             db_file_path,
             self.on_objects_to_search_changed,
-            self.media_handler.current_media["conditions"].objects_to_search,
+            self.media.current_media["conditions"].objects_to_search,
         )
 
         self.show_filters()
@@ -133,8 +132,9 @@ class Window(QMainWindow):
         self.ui.label_7.setVisible(True)
         self.ui.label_8.setVisible(True)
         self.ui.label_9.setVisible(True)
+        self.ui.sound.setVisible(True)
 
-        if self.media_handler.has_prev or self.media_handler.has_next:
+        if self.media.has_prev or self.media.has_next:
             self.clear_ui()
 
     def open_file_explorer(self, file_filter):
@@ -152,12 +152,12 @@ class Window(QMainWindow):
         return file_name
 
     def on_stop_button_click(self):
-        if self.media_handler.current_media["stopped"]:
-            self.media_handler.toggle_video_stop()
+        if self.media.current_media["stopped"]:
+            self.media.toggle_video_stop()
             self.ui.stopVideoButton.setText("Остановить")
             self.worker.run()
         else:
-            self.media_handler.toggle_video_stop()
+            self.media.toggle_video_stop()
             self.ui.stopVideoButton.setText("Продолжить")
             self.worker.stop()
 
@@ -208,13 +208,14 @@ class Window(QMainWindow):
         self.ui.crop.clicked.connect(self.on_crop_button_click)
         self.ui.clear_filters.clicked.connect(self.clear_filters)
         self.ui.prev.clicked.connect(
-            lambda: self.handle_history_move(self.media_handler.set_prev)
+            lambda: self.handle_history_move(self.media.set_prev)
         )
         self.ui.next.clicked.connect(
-            lambda: self.handle_history_move(self.media_handler.set_next)
+            lambda: self.handle_history_move(self.media.set_next)
         )
         self.ui.refresh_image.clicked.connect(self.refresh_image)
         self.ui.webcamera.clicked.connect(self.on_webcam_button_click)
+        self.ui.sound.clicked.connect(self.media.toggle_should_beep)
 
         self.ui.crop.setVisible(False)
         self.ui.stopVideoButton.setVisible(False)
@@ -230,15 +231,16 @@ class Window(QMainWindow):
         self.ui.label_7.setVisible(False)
         self.ui.label_8.setVisible(False)
         self.ui.label_9.setVisible(False)
+        self.ui.sound.setVisible(False)
 
         self.hide_filters()
 
     def on_filter_value_changed(self, filter_type, get_value):
-        current_media = self.media_handler.current_media
+        current_media = self.media.current_media
         current_media["filters"].set_filters({filter_type: get_value()})
 
         if self.current_media_type == "image":
-            pixmap = self.media_handler.reconvert_with_filters()
+            pixmap = self.media.reconvert_with_filters()
             self.ui.image.setPixmap(pixmap)
 
     def hide_filters(self):
@@ -265,16 +267,16 @@ class Window(QMainWindow):
 
     def set_filters(self):
         self.ui.brightness_slider.setValue(
-            self.media_handler.current_media["filters"].filters["brightness"]["value"]
+            self.media.current_media["filters"].filters["brightness"]["value"]
         )
         self.ui.contrast_slider.setValue(
-            self.media_handler.current_media["filters"].filters["contrast"]["value"]
+            self.media.current_media["filters"].filters["contrast"]["value"]
         )
         self.ui.solarization_slider.setValue(
-            self.media_handler.current_media["filters"].filters["solarization"]["value"]
+            self.media.current_media["filters"].filters["solarization"]["value"]
         )
         self.ui.binary_slider.setValue(
-            self.media_handler.current_media["filters"].filters["binarization"]["value"]
+            self.media.current_media["filters"].filters["binarization"]["value"]
         )
 
     def clear_filters(self):
@@ -309,13 +311,14 @@ class Window(QMainWindow):
         self.setCursor(Qt.CursorShape.ArrowCursor)
 
     def on_crop(self):
-        new_pixmap = self.media_handler.handle_crop()
-        self.media_handler.clear_crop_points()
+        cropped_image = self.media.handle_crop()
+        self.media.clear_crop_points()
         self.clear_cropping()
-        setup_report_table(
-            self.ui, self.media_handler.current_media["recognized_objects"]
+        self.media.create_new_image_history_record(
+            self.media.current_media["image_file_path"],
+            cropped_image,
         )
-        self.ui.image.setPixmap(new_pixmap)
+        self.load_image(current_media=self.media.current_media)
 
     # Данный метод это перезапись родительского ( QMainWindow ) метода
     # Он служит для отслеживания каждого нажания мыши
@@ -348,9 +351,9 @@ class Window(QMainWindow):
             crop_point = (int(point_x), int(point_y))
 
             if crop_point:
-                self.media_handler.set_crop_point(crop_point)
+                self.media.set_crop_point(crop_point)
 
-            if self.media_handler.crop_points_length() == 2:
+            if self.media.crop_points_length() == 2:
                 self.on_crop()
 
         return super().mousePressEvent(event)
@@ -365,12 +368,12 @@ class Window(QMainWindow):
             self.ui.refresh_image.setVisible(True)
             self.ui.stopVideoButton.setVisible(False)
 
-        if self.media_handler.has_next:
+        if self.media.has_next:
             self.ui.next.setVisible(True)
         else:
             self.ui.next.setVisible(False)
 
-        if self.media_handler.has_prev:
+        if self.media.has_prev:
             self.ui.prev.setVisible(True)
         else:
             self.ui.prev.setVisible(False)
@@ -385,27 +388,23 @@ class Window(QMainWindow):
 
     @pyqtSlot(np.ndarray)
     def update_video_frame(self, cv_frame):
-        frame_as_pixmap, recognized_objects = self.media_handler.analyze_video_frame(
-            cv_frame
-        )
+        frame_as_pixmap, recognized_objects = self.media.analyze_video_frame(cv_frame)
         setup_report_table(self.ui, recognized_objects)
         self.ui.image.setPixmap(frame_as_pixmap)
 
     def refresh_image(self):
-        image = self.media_handler.analyze_image(
-            current_media=self.media_handler.current_media
+        image = self.media.analyze_image(
+            current_media=self.media.current_media, should_recognize=False
         )
-        setup_report_table(
-            self.ui, self.media_handler.current_media["recognized_objects"]
-        )
+        setup_report_table(self.ui, self.media.current_media["recognized_objects"])
         self.ui.image.setPixmap(image)
 
     def on_objects_to_search_changed(self, object_name, checked):
-        conditions = self.media_handler.current_media["conditions"]
+        conditions = self.media.current_media["conditions"]
         conditions.handle_objects_to_search_update(object_name, checked)
 
     def on_conditions_changed(self, condition_value):
-        conditions = self.media_handler.current_media["conditions"]
+        conditions = self.media.current_media["conditions"]
         conditions.handle_conditions_update(condition_value)
 
 

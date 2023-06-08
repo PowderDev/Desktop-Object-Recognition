@@ -1,3 +1,4 @@
+import winsound
 from PyQt6.QtCore import Qt
 
 
@@ -13,8 +14,11 @@ class ConditionsHandler:
     # 4. Если есть для него условия - проверяем соответсвие условию
     # 5. Соответсвует или условия нет? - отправляем в результат.
     # В результате получаем объекты, которые и будут показаны
-    def apply_conditions(self, recognized_objects):
+    def apply_conditions(
+        self, recognized_objects, should_beep=False, beep_duration=1000
+    ):
         result = {}
+        should_beep_by_conditions = False
 
         if len(self.objects_to_search.keys()) == 0:
             return recognized_objects
@@ -28,10 +32,14 @@ class ConditionsHandler:
                     if condition["checked"] == Qt.CheckState.Checked:
                         if self.handle_condition(condition, candidate_value["count"]):
                             result[object_name] = candidate_value
+                            should_beep_by_conditions = True
                     else:
                         result[object_name] = candidate_value
                 else:
                     result[object_name] = candidate_value
+
+        if should_beep_by_conditions and should_beep:
+            winsound.Beep(440, beep_duration)
 
         return result
 

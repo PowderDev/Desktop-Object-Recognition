@@ -16,7 +16,8 @@ def setup_objects_to_search_database(ui, db_file_path, handler, objects_to_searc
     names = []
 
     for row in sheet.rows:
-        names.append(row[0].value)
+        translated_name = row[2].value if len(row) > 1 else ""
+        names.append((row[0].value, translated_name))
 
     ui.tableWidget.setVisible(True)
     ui.tableWidget.setColumnCount(2)
@@ -25,7 +26,7 @@ def setup_objects_to_search_database(ui, db_file_path, handler, objects_to_searc
 
     ui.tableWidget.setVisible(True)
 
-    for name in names:
+    for name, translated_name in names:
         rowPosition = ui.tableWidget.rowCount()
         is_in_object_to_search = False
 
@@ -36,7 +37,7 @@ def setup_objects_to_search_database(ui, db_file_path, handler, objects_to_searc
 
         ui.tableWidget.insertRow(rowPosition)
         ui.tableWidget.setCellWidget(rowPosition, 0, widget)
-        ui.tableWidget.setItem(rowPosition, 1, QTableWidgetItem(name))
+        ui.tableWidget.setItem(rowPosition, 1, QTableWidgetItem(translated_name))
 
     ui.tableWidget.resizeColumnsToContents()
     ui.tableWidget.setEnabled(True)

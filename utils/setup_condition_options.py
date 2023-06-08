@@ -16,7 +16,8 @@ def setup_condition_options(ui, db_file_path, handler, current_conditions):
     objects = {}
 
     for row in sheet.rows:
-        objects[row[0].value] = row[1].value if len(row) > 0 else 0
+        translated_name = row[2].value if len(row) > 1 else ""
+        objects[row[0].value] = (row[1].value, translated_name) if len(row) > 0 else 0
 
     ui.tableWidget_2.setVisible(True)
     ui.tableWidget_2.setColumnCount(3)
@@ -39,7 +40,10 @@ def setup_condition_options(ui, db_file_path, handler, current_conditions):
 
 def create_row(objects, table_row, handler, condition):
     object_name = table_row[0].value
-    object_value = objects[table_row[0].value]
+    translated_object_name = (
+        objects[table_row[0].value][1] if table_row[0].value else ""
+    )
+    object_value = objects[table_row[0].value][0] if table_row[0].value else 0
 
     checkbox_widget = QWidget()
     checkbox = QCheckBox()
@@ -49,7 +53,7 @@ def create_row(objects, table_row, handler, condition):
     else:
         checkbox.setCheckState(Qt.CheckState.Unchecked)
 
-    checkbox.setText(object_name)
+    checkbox.setText(translated_object_name)
 
     h_box = QHBoxLayout(checkbox_widget)
     h_box.addWidget(checkbox)
@@ -84,22 +88,34 @@ def create_row(objects, table_row, handler, condition):
     h_box.addWidget(combo_box)
 
     checkbox.clicked.connect(
-        lambda: handler(get_condition_data(checkbox, count_input, combo_box))
+        lambda: handler(
+            get_condition_data(
+                checkbox.checkState(), object_name, count_input, combo_box
+            )
+        )
     )
     combo_box.currentIndexChanged.connect(
-        lambda: handler(get_condition_data(checkbox, count_input, combo_box))
+        lambda: handler(
+            get_condition_data(
+                checkbox.checkState(), object_name, count_input, combo_box
+            )
+        )
     )
     count_input.valueChanged.connect(
-        lambda: handler(get_condition_data(checkbox, count_input, combo_box))
+        lambda: handler(
+            get_condition_data(
+                checkbox.checkState(), object_name, count_input, combo_box
+            )
+        )
     )
 
     return checkbox_widget, combo_box_widget, count_widget
 
 
-def get_condition_data(checkbox, count_input, combo_box):
+def get_condition_data(checkboxState, checkboxText, count_input, combo_box):
     return {
-        "name": checkbox.text(),
-        "checked": checkbox.checkState(),
+        "name": checkboxText,
+        "checked": checkboxState,
         "count": count_input.value(),
         "operator": combo_box.itemText(combo_box.currentIndex()),
     }
